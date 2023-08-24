@@ -23,7 +23,13 @@
         <a class="navbar-link" href="contact">CONTACT US</a>
         <a class="navbar-link" href="#">SIGN IN</a>
         <a class="navbar-link" href="#">SIGN OUT</a>
-        <a class="navbar-link" href="#">LOGIN</a>
+        <form action="login" method="post">
+            {% csrf_token %}
+            <input id='username' name='username' type='text' placeholder='Username' />
+            <input id='password' name='password' type='password' placeholder='Password' />
+            <button class="btn btn-primary" type="submit">LOGIN</submit>
+        </form>
+
     
     </nav>
 
