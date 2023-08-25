@@ -21,18 +21,28 @@
         <a class="navbar-brand" href=" ">DEALER</a>
         <a class="navbar-link" href="about">ABOUT US</a>
         <a class="navbar-link" href="contact">CONTACT US</a>
-        <a class="navbar-link" href="#">SIGN IN</a>
-        <a class="navbar-link" href="#">SIGN OUT</a>
+
+        {% if user.is_authenticated %}
+ 
+        <a class="navbar-link" href="#">{{ user.username }}</a>
+        <a class="navbar-link" href="logout">SIGN OUT</a>
+        {% else %}
+
         <form action="login" method="post">
             {% csrf_token %}
             <input id='username' name='username' type='text' placeholder='Username' />
             <input id='password' name='password' type='password' placeholder='Password' />
-            <button class="btn btn-primary" type="submit">LOGIN</submit>
+            <button class="btn btn-primary" type="submit">LOGIN</button>
         </form>
+        <a class="btn btn-success" href="registration">REGISTER</a>
 
+        {% endif %}
+ 
     
     </nav>
-
+    {% if message %}
+    <span class="alert alert-primary mt-5 w-100" role="alert">{{ message }}</span>
+    {% endif %}
     <!--Add a dealer table here -->
     {% block main %}
 

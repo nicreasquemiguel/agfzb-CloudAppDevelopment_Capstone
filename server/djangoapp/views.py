@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
 # from .restapis import related methods
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login , logout , authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
@@ -27,7 +28,8 @@ def contact(request):
     context = {}
     return render(request, 'djangoapp/contact.html', context)
 
-def login(request):
+
+def login_view(request):
     if request.method == "POST":
 
         # Attempt to sign user in
@@ -38,21 +40,43 @@ def login(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return render(request, 'djangoapp/index.html', {
+                "message": "Logged in!"})
         else:
             return render(request, "djangoapp/index.html", {
-                "message": "Invalid username and/or password."
+                "message": "Invalid email and/or password."
             })
     else:
-        return render(request, "index.html")
+        return render(request, "djangoapp/index.html")
 
-# Create a `logout_request` view to handle sign out request
-# def logout_request(request):
-# ...
+
+def logout_view(request):
+    logout(request)
+    return render(request, 'djangoapp/index.html')
 
 # Create a `registration_request` view to handle sign up request
-# def registration_request(request):
-# ...
+def registration_request(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        firstname = request.POST["firstname"]
+        lastname = request.POST["lastname"]
+        password = request.POST["password"]
+
+        # Ensure password matches confirmation
+ 
+
+        # Attempt to create new user
+        try:
+            user = User.objects.create_user(username=username, first_name=firstname, last_name=lastname, password=password)
+            user.save()
+        except IntegrityError:
+            return render(request, "djangoapp/registration.html", {
+                "message": "Username already taken."
+            })
+        login(request, user)
+        return render(request, "djangoapp/index.html")
+    else:
+        return render(request, "djangoapp/registration.html")
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
