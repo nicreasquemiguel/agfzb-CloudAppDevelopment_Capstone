@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Dealership Review</title>
-    {% load static %}
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+{% extends 'djangoapp/layout.html' %}
 
-    <body>
+{% block main %}
+<h1>Dealer Details: </h1>
+<ul class='list-group'>
 
-    <!--Add a nav bar here -->
-
-    <!-- Add reviews as cards -->
-
-    </body>
-
-</html>
+{% for review in reviews%}
+    <li class='list-group-item'>{{ review.review }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

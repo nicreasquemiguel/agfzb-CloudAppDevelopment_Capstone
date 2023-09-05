@@ -19,6 +19,7 @@
     <!--Add a nav bar here -->
     <nav class="navbar bg-dark link-dark">
         <a class="navbar-brand" href=" ">DEALER</a>
+        <a class="navbar-link" href="contact">REVIEWS</a>
         <a class="navbar-link" href="about">ABOUT US</a>
         <a class="navbar-link" href="contact">CONTACT US</a>
 
@@ -41,12 +42,14 @@
     
     </nav>
     {% if message %}
-    <span class="alert alert-primary mt-5 w-100" role="alert">{{ message }}</span>
+    <span class="alert alert-primary my-5 w-100" role="alert">{{ message }}</span>
     {% endif %}
     <!--Add a dealer table here -->
+    <div class='container mt-2'>
     {% block main %}
 
     {% endblock %}
+    </div>
     </body>
 
 </html>
