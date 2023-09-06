@@ -12,6 +12,11 @@ from datetime import datetime
 import logging
 import json
 
+#URL TO GET DEALERS ALL, BY ID OR STATE
+URL_DEALER = "https://us-south.functions.appdomain.cloud/api/v1/web/2a3dac3c-7f9d-484d-84d4-716d2585a304/dealership-package/get-dealership.json"
+#URL TO GET REVIEWS BY ID OF DEALER
+URL_REVIEW = 'https://us-south.functions.appdomain.cloud/api/v1/web/2a3dac3c-7f9d-484d-84d4-716d2585a304/dealership-package/get-review.json'
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -84,25 +89,28 @@ def get_dealerships(request):
     if request.method == "GET":
         print(request.GET.keys())
         context = {}
-        url = "https://us-south.functions.appdomain.cloud/api/v1/web/2a3dac3c-7f9d-484d-84d4-716d2585a304/dealership-package/get-dealership.json"
-        # Get dealers from the URL
+
         #dealerships = get_dealers_from_cf(url)
         if request.GET.get('state'):
-            context['dealerships'] = get_dealers_by_state(url, request.GET['state'])
+            context['dealerships'] = get_dealers_by_state(URL_DEALER, request.GET['state'])
+
             #context['state'] = request.GET('state')
         elif request.GET.get('id'):
-            context['dealerships'] = get_dealers_by_id(url, request.GET['id'])
+            context['reviews'] = ge_dealer_reviews_from_cf(URL_REVIEW, dealer_id=request.GET['id'])
+            context['dealer'] = get_dealers_by_id(URL_DEALER, dealer_id)
+            return render(request, 'djangoapp/dealer_details.html', context)
+
         else:
-            context['dealerships'] = get_dealers_from_cf(url)
-        return render(request, 'djangoapp/dealer_details.html', context)
+            context['dealerships'] = get_dealers_from_cf(URL_DEALER)
+        
+        return render(request, 'djangoapp/index.html', context)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
 def get_dealer_details(request, dealer_id):
     context = {}
-    url = 'https://us-south.functions.appdomain.cloud/api/v1/web/2a3dac3c-7f9d-484d-84d4-716d2585a304/dealership-package/get-review.json'
-    context['reviews'] = get_dealer_reviews_from_cf(url, dealer_id=dealer_id)
-    
+    context['reviews'] = get_dealer_reviews_from_cf(URL_REVIEW, dealer_id=dealer_id)
+    context['dealer'] = get_dealers_by_id(URL_DEALER, dealer_id)
     return render(request, 'djangoapp/dealer_details.html', context)
 
 
@@ -110,20 +118,21 @@ def get_dealer_details(request, dealer_id):
 # Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
     if request.method == 'POST':
-        if request.user.is_autheticated:
+        if request.user.is_authenticated:
             form = request.POST
+            print(request.user)
             review = {
-                "name" : "{request.user.first_name} {request.user.last_name}",
+                "name" : request.user.first_name + " " +request.user.last_name,
                 "dealership": dealer_id,
                 "review": form['review'],
                 "purchase": form.get("purchasecheck"),
             }
-            if form.get("purhcasecheck"):
+            if form.get("purchasecheck"):
                 review["purchase_date"] = datetime.strptime(form.get("purchasedate"), "%m/%d/%Y").isoformat()
                 car = models.CarModel.objects.get(pk=form["car"])
-                review["car_make"] = car.carmake.name
+                review["car_make"] = car.make.name
                 review["car_model"] = car.name
-                review["car_year"]= car.year.strftime("%Y")
+                review["car_year"]= car.year
             json_payload = {"review": review}
             print(json_payload)
             url = 'https://us-south.functions.appdomain.cloud/api/v1/web/2a3dac3c-7f9d-484d-84d4-716d2585a304/dealership-package/post-review'

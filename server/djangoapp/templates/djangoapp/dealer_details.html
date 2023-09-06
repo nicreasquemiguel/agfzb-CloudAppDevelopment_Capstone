@@ -1,11 +1,21 @@
 {% extends 'djangoapp/layout.html' %}
 
 {% block main %}
-<h1>Dealer Details: </h1>
-<ul class='list-group'>
+<h1>{{dealer.full_name}} </h1>
+<div class='card font-italic'>
+    <div class='card-body'>
+    <h3 class='card-title'>Dealer Details</h3>
+    {{ dealer.address }}, {{ dealer.city }}, {{ dealer.state }}, US {{ dealer.zip }}
+    </div>
+</div>
+<ul class='list-group card'>
+    <div class='card-body'>
+        <h3 class='card-title'>Reviews</h3>
+        <a class = 'btn btn-primary m-3 w-100 text-center' href='add-review'>ADD REVIEW</a>
 
-{% for review in reviews%}
-    <li class='list-group-item'><p class="font-weight-bold">{{review.car_make}} {{review.car_model}} {{review.car_year}}</p>{{ review.review }} - <span class='font-italic'>by {{review.name}} on {{review.purchase_date}} with a <span class='font-underline'>{{review.sentiment}}</span> review</li>
-{% endfor %}
+        {% for review in reviews%}
+            <li class='list-group-item'><p class="font-weight-bold">{{review.car_make}} {{review.car_model}} {{review.car_year}}</p>{{ review.review }} - <span class='font-italic'>by {{review.name}} purchased on {{review.purchase_date}} with a <span class='font-underline'>{{review.sentiment}}</span> review</li>
+        {% endfor %}
+    </div>
 </ul>
 {% endblock %}

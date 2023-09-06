@@ -100,7 +100,7 @@ def get_dealers_by_id(url, id):
                                st=dealer["st"], state=dealer["state"], zip=dealer["zip"])
         results.append(dealer_obj)
 
-    return results
+    return results[0]
 
 
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
@@ -114,8 +114,10 @@ def get_dealer_reviews_from_cf(url, dealer_id):
     reviews =json_result['reviews']
 
     for review in reviews:    
-        review_obj = DealerReview(dealership=review['dealership'], name=review['name'], purchase=review['purchase'], review=review['review'], purchase_date=review['purchase_date'], car_make=review['car_make'], car_model=review['car_model'], car_year=review['car_year'], id=review['id'], sentiment=analyze_review_sentiments(review['review']))
+        review_obj = DealerReview(dealership=review['dealership'], name=review['name'], purchase=review['purchase'], review=review['review'], purchase_date=review['purchase_date'], car_make=review['car_make'], car_model=review['car_model'], car_year=review['car_year'], id=review['_id'], sentiment=analyze_review_sentiments(review['review']))
         results.append(review_obj)
+
+    print(results)
     return results
 
 

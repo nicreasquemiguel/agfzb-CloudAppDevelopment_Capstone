@@ -1,11 +1,11 @@
 {% extends 'djangoapp/layout.html' %}
 
 {% block main %}
-<h1>List of dealerships in {{response}} </h1>
+<h1>List of dealerships in </h1>
 <ul class='list-group'>
 
 {% for dealer in dealerships%}
-    <li class='list-group-item'>{{ dealer.short_name }}</li>
+    <li class='list-group-item'><a href='/djangoapp/dealer/{{dealer.id}}'>{{ dealer.short_name }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}

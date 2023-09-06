@@ -5,7 +5,7 @@
 <ul class='list-group'>
 
     {% for dealer in dealers %}
-        <form action="/djangoapp/dealer/{{id}}/add_review/" method="post">
+        <form action="/djangoapp/dealer/{{id}}/add-review" method="post">
             {% csrf_token %}
     {% endfor %}        {% csrf_token %}
         <div class="form-group">
@@ -20,7 +20,7 @@
             <label for="car">Select your car:</label>
             <select name="car" id="car" class="form-select">
                 {% for car in cars %}
-                    <option selected value={{car.id}}>{{car.car_make.name}} {{car.name}} {{ car.year }}</option>
+                    <option selected value={{car.id}}>{{car.car_make}} {{car.name}} {{ car.year }}</option>
                 {% endfor %}
             </select>
         </div>
