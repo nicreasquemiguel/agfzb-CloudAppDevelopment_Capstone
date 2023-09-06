@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
 from . import models
-from .restapis import get_dealers_from_cf, get_dealers_by_state, get_dealers_by_id, get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_dealers_by_state, get_dealers_by_id, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login , logout , authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -108,6 +108,34 @@ def get_dealer_details(request, dealer_id):
 
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
+    if request.method == 'POST':
+        if request.user.is_autheticated:
+            form = request.POST
+            review = {
+                "name" : "{request.user.first_name} {request.user.last_name}",
+                "dealership": dealer_id,
+                "review": form['review'],
+                "purchase": form.get("purchasecheck"),
+            }
+            if form.get("purhcasecheck"):
+                review["purchase_date"] = datetime.strptime(form.get("purchasedate"), "%m/%d/%Y").isoformat()
+                car = models.CarModel.objects.get(pk=form["car"])
+                review["car_make"] = car.carmake.name
+                review["car_model"] = car.name
+                review["car_year"]= car.year.strftime("%Y")
+            json_payload = {"review": review}
+            print(json_payload)
+            url = 'https://us-south.functions.appdomain.cloud/api/v1/web/2a3dac3c-7f9d-484d-84d4-716d2585a304/dealership-package/post-review'
+            post_request(url, json_payload, dealer_id=dealer_id)
+            return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
 
+    if request.method == 'GET':
+        url = "https://us-south.functions.appdomain.cloud/api/v1/web/2a3dac3c-7f9d-484d-84d4-716d2585a304/dealership-package/get-dealership.json?dealerId={0}".format(dealer_id)
+        # Get dealers from the URL
+        context = {
+            "cars": models.CarModel.objects.all(),
+            "dealers": get_dealers_from_cf(url),
+            "id":dealer_id,
+        }
+        return render(request, 'djangoapp/add_review.html', context)

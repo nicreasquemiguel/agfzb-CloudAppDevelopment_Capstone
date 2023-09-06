@@ -5,7 +5,7 @@
 <ul class='list-group'>
 
 {% for review in reviews%}
-    <li class='list-group-item'>{{ review.review }}</li>
+    <li class='list-group-item'><p class="font-weight-bold">{{review.car_make}} {{review.car_model}} {{review.car_year}}</p>{{ review.review }} - <span class='font-italic'>by {{review.name}} on {{review.purchase_date}} with a <span class='font-underline'>{{review.sentiment}}</span> review</li>
 {% endfor %}
 </ul>
 {% endblock %}
